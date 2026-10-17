@@ -34,6 +34,21 @@
         </section>
     @endif
 
+    @if ($musicLinks)
+        <section class="mx-auto max-w-5xl px-4 py-16 text-center lg:px-8">
+            <h2 class="font-display text-3xl font-bold uppercase tracking-wide lg:text-4xl">Ouça a banda</h2>
+
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                @foreach ($musicLinks as $musicLink)
+                    <a href="{{ $musicLink['url'] }}" target="_blank" rel="noopener" class="flex items-center gap-3 border border-white/30 px-8 py-3 font-display font-medium uppercase tracking-widest transition hover:border-brand hover:text-brand">
+                        <x-platform-icon :name="$musicLink['name']" class="size-5 shrink-0" />
+                        {{ $musicLink['name'] }}
+                    </a>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
     @if ($shows->isNotEmpty())
         <section class="mx-auto max-w-5xl px-4 py-16 lg:px-8">
             <x-section-heading title="Próximos shows" :href="route('shows.index')" link="Agenda completa" />

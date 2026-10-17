@@ -28,6 +28,7 @@ class HomeController extends Controller
                 'sameAs' => [config('site.instagram_url')],
             ],
             'tagline' => Setting::read(Setting::HOME_TAGLINE),
+            'musicLinks' => Setting::musicLinks(),
             'shows' => Show::query()->published()->upcoming()->oldest('starts_at')->limit(3)->get(),
             // A featured video wins; otherwise the newest one is shown.
             'video' => Video::query()->published()->orderByDesc('is_featured')->latest('published_at')->latest('id')->first(),

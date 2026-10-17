@@ -15,7 +15,8 @@ it('renders with no content, offering only the newsletter', function (): void {
         ->assertDontSee('Agenda completa')
         ->assertDontSee('Todas as notícias')
         ->assertDontSee('Todos os álbuns')
-        ->assertDontSee('Ver a loja');
+        ->assertDontSee('Ver a loja')
+        ->assertDontSee('Ouça a banda');
 });
 
 it('shows the official band photo until a hero image is set', function (): void {
@@ -97,4 +98,17 @@ it('shows only featured active products', function (): void {
         ->assertSee('Featured Shirt')
         ->assertDontSee('Regular Shirt')
         ->assertDontSee('Hidden Shirt');
+});
+
+it('shows each streaming platform with its icon, or a generic one when unknown', function (): void {
+    Setting::write(Setting::MUSIC_LINKS, json_encode([
+        ['name' => 'YouTube Music', 'url' => 'https://music.youtube.com/channel/stn'],
+        ['name' => 'Rádio da Esquina', 'url' => 'https://radio.example.com/stn'],
+    ]));
+
+    $youtubeMusicPath = 'M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12';
+
+    $this->get('/')
+        ->assertSeeInOrder(['https://music.youtube.com/channel/stn', $youtubeMusicPath, 'YouTube Music'], escape: false)
+        ->assertSeeInOrder(['https://radio.example.com/stn', 'data-slot="icon"', 'Rádio da Esquina'], escape: false);
 });

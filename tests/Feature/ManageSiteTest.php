@@ -3,6 +3,7 @@
 use App\Filament\Pages\ManageSite;
 use App\Models\Setting;
 use App\Models\User;
+use Filament\Forms\Components\Repeater;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
@@ -67,4 +68,46 @@ it('rejects a hero upload that is not an image', function (): void {
         ->fillForm(['hero_image' => UploadedFile::fake()->create('notes.pdf', 100, 'application/pdf')])
         ->call('save')
         ->assertHasFormErrors(['hero_image']);
+});
+
+it('saves the streaming links, which the home page and footer then link to', function (): void {
+    $this->actingAs(User::factory()->create());
+    $undoRepeaterFake = Repeater::fake();
+
+    Livewire::test(ManageSite::class)
+        ->fillForm([
+            'music_links' => [
+                ['name' => 'Spotify', 'url' => 'https://open.spotify.com/artist/stn'],
+                ['name' => 'Deezer', 'url' => 'https://www.deezer.com/artist/stn'],
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $undoRepeaterFake();
+
+    expect(Setting::musicLinks())->toBe([
+        ['name' => 'Spotify', 'url' => 'https://open.spotify.com/artist/stn'],
+        ['name' => 'Deezer', 'url' => 'https://www.deezer.com/artist/stn'],
+    ]);
+
+    $this->get('/')
+        ->assertSee('Ouça a banda')
+        ->assertSeeInOrder(['https://open.spotify.com/artist/stn', 'https://www.deezer.com/artist/stn']);
+
+    $this->get('/contato')->assertSee('https://open.spotify.com/artist/stn');
+});
+
+it('rejects a streaming link that is not a web address', function (): void {
+    $this->actingAs(User::factory()->create());
+    $undoRepeaterFake = Repeater::fake();
+
+    Livewire::test(ManageSite::class)
+        ->fillForm(['music_links' => [['name' => 'Spotify', 'url' => 'javascript:alert(1)']]])
+        ->call('save')
+        ->assertHasFormErrors(['music_links.0.url']);
+
+    $undoRepeaterFake();
+
+    expect(Setting::musicLinks())->toBe([]);
 });

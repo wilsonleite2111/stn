@@ -114,9 +114,15 @@
             <div class="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-10 text-center lg:flex-row lg:justify-between lg:px-8 lg:text-left">
                 <img src="{{ asset('images/logo.jpg') }}" alt="{{ config('app.name') }}" width="716" height="657" loading="lazy" class="h-20 w-auto">
 
-                <a href="{{ config('site.instagram_url') }}" target="_blank" rel="noopener" class="font-display text-sm font-medium uppercase tracking-widest transition hover:text-brand">
-                    Instagram · @stn_soul_true_noise
-                </a>
+                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 font-display text-sm font-medium uppercase tracking-widest">
+                    <a href="{{ config('site.instagram_url') }}" target="_blank" rel="noopener" class="transition hover:text-brand">
+                        Instagram · @stn_soul_true_noise
+                    </a>
+
+                    @foreach (\App\Models\Setting::musicLinks() as $musicLink)
+                        <a href="{{ $musicLink['url'] }}" target="_blank" rel="noopener" class="transition hover:text-brand">{{ $musicLink['name'] }}</a>
+                    @endforeach
+                </div>
 
                 <p class="text-sm text-white/60">
                     &copy; {{ date('Y') }} {{ config('app.name') }}. Todos os direitos reservados.

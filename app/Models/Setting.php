@@ -26,6 +26,8 @@ class Setting extends Model
 
     public const string CONTACT_EMAIL = 'contact.email';
 
+    public const string MUSIC_LINKS = 'music.links';
+
     /**
      * Reduces a phone number typed in any format to the digits wa.me expects, adding Brazil's country code when missing.
      */
@@ -38,6 +40,19 @@ class Setting extends Model
         }
 
         return in_array(strlen($digits), [12, 13], true) && str_starts_with($digits, '55') ? $digits : null;
+    }
+
+    /**
+     * The band's profiles on streaming platforms, in the order set in the admin.
+     *
+     * @return list<array{name: string, url: string}>
+     */
+    public static function musicLinks(): array
+    {
+        /** @var list<array{name: string, url: string}> $links */
+        $links = json_decode(self::read(self::MUSIC_LINKS) ?? '[]', true, flags: JSON_THROW_ON_ERROR);
+
+        return $links;
     }
 
     public static function read(string $key): ?string
