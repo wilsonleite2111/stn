@@ -24,7 +24,7 @@ it('shows the official band photo until a hero image is set', function (): void 
 
     $this->get('/')->assertSee($officialPhoto, escape: false);
 
-    Setting::write(Setting::HOME_HERO_IMAGE, 'site/hero.jpg');
+    Setting::write(Setting::HOME_HERO_IMAGES, json_encode(['site/hero.jpg']));
 
     $this->get('/')
         ->assertSee('/storage/site/hero.jpg')

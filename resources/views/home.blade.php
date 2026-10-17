@@ -1,9 +1,34 @@
-<x-layouts.site :image="$heroImageUrl">
+<x-layouts.site :image="$heroImageUrls[0] ?? null">
     <x-structured-data :data="$structuredData" />
 
-    @if ($heroImageUrl)
-        <section class="relative flex min-h-[70vh] items-end">
-            <img src="{{ $heroImageUrl }}" alt="" fetchpriority="high" class="absolute inset-0 size-full object-contain">
+    @if ($heroImageUrls)
+        <section
+            class="relative flex min-h-[70vh] items-end"
+            x-data="{ slide: 0, total: {{ count($heroImageUrls) }}, animate: true }"
+            x-init="if (total > 1 && ! matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(() => {
+                {{-- Fallback for a transitionend the browser skipped, e.g. in a background tab. --}}
+                if (slide === total) { animate = false; slide = 0; return }
+                animate = true
+                slide++
+            }, {{ $heroInterval * 1000 }})"
+        >
+            <div class="absolute inset-0 overflow-hidden">
+                {{-- After sliding onto the copy of the first photo, jump back to the real one without animation, so the carousel always moves forward. --}}
+                <div
+                    class="flex h-full"
+                    :class="animate && 'transition-transform duration-700 ease-in-out'"
+                    :style="`transform: translateX(-${slide * 100}%)`"
+                    x-on:transitionend="if (slide === total) { animate = false; slide = 0 }"
+                >
+                    @foreach ($heroImageUrls as $heroImageUrl)
+                        <img src="{{ $heroImageUrl }}" alt="" @if ($loop->first) fetchpriority="high" @endif class="h-full w-full shrink-0 object-contain">
+                    @endforeach
+
+                    @if (count($heroImageUrls) > 1)
+                        <img src="{{ $heroImageUrls[0] }}" alt="" aria-hidden="true" class="h-full w-full shrink-0 object-contain">
+                    @endif
+                </div>
+            </div>
             <div class="absolute inset-0 bg-linear-to-t from-ink via-ink/50 to-transparent"></div>
 
             <div class="relative mx-auto w-full max-w-7xl px-4 pb-12 pt-40 lg:px-8 lg:pb-20">

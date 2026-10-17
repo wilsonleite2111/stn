@@ -36,7 +36,8 @@ class ManageSite extends Page
     public function mount(): void
     {
         $this->form->fill([
-            'hero_image' => Setting::read(Setting::HOME_HERO_IMAGE),
+            'hero_images' => Setting::heroImages(),
+            'hero_interval' => Setting::heroInterval(),
             'tagline' => Setting::read(Setting::HOME_TAGLINE),
             'contact_email' => Setting::read(Setting::CONTACT_EMAIL),
             'music_links' => Setting::musicLinks(),
@@ -49,15 +50,27 @@ class ManageSite extends Page
             ->components([
                 Section::make('Página inicial')
                     ->schema([
-                        FileUpload::make('hero_image')
-                            ->label('Foto de abertura')
-                            ->helperText('Foto horizontal grande (pelo menos 1920 px de largura), sem texto ou logo por cima. Sem foto, a página inicial usa a foto oficial da banda.')
+                        FileUpload::make('hero_images')
+                            ->label('Fotos de abertura')
+                            ->helperText('Até 5 fotos horizontais grandes (pelo menos 1920 px de largura), sem texto ou logo por cima. Com mais de uma, elas passam em carrossel, na ordem desta lista. Sem foto, a página inicial usa a foto oficial da banda.')
                             ->disk('public')
                             ->directory('site')
                             ->visibility('public')
                             ->image()
+                            ->multiple()
+                            ->maxFiles(5)
+                            ->reorderable()
+                            ->appendFiles()
+                            ->panelLayout('grid')
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->maxSize(15 * 1024),
+                        TextInput::make('hero_interval')
+                            ->label('Tempo de cada foto no carrossel (segundos)')
+                            ->integer()
+                            ->minValue(1)
+                            ->maxValue(60)
+                            ->default(3)
+                            ->required(),
                         TextInput::make('tagline')
                             ->label('Frase de abertura')
                             ->helperText('Opcional. Aparece abaixo do nome da banda.')
@@ -102,7 +115,8 @@ class ManageSite extends Page
     {
         $data = $this->form->getState();
 
-        Setting::write(Setting::HOME_HERO_IMAGE, $data['hero_image'] ?? null);
+        Setting::write(Setting::HOME_HERO_IMAGES, json_encode(array_values($data['hero_images'] ?? []), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+        Setting::write(Setting::HOME_HERO_INTERVAL, (string) $data['hero_interval']);
         Setting::write(Setting::HOME_TAGLINE, $data['tagline'] ?? null);
         Setting::write(Setting::CONTACT_EMAIL, $data['contact_email'] ?? null);
         Setting::write(Setting::MUSIC_LINKS, json_encode(array_values($data['music_links'] ?? []), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));

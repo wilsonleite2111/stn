@@ -30,7 +30,7 @@ it('describes the band to search engines on the home page', function (): void {
 });
 
 it('shares the hero image on the home page once one is set', function (): void {
-    Setting::write(Setting::HOME_HERO_IMAGE, 'site/hero.jpg');
+    Setting::write(Setting::HOME_HERO_IMAGES, json_encode(['site/hero.jpg', 'site/second.jpg']));
 
     $this->get('/')->assertSee('<meta property="og:image" content="'.Storage::disk('public')->url('site/hero.jpg').'">', escape: false);
 });

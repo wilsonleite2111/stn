@@ -24,13 +24,18 @@ it('opens with the saved settings', function (): void {
     ]);
 });
 
-it('saves the hero image, tagline and contact address, which the home page then uses', function (): void {
+it('saves the hero photos, carousel interval, tagline and contact address, which the home page then uses', function (): void {
     Storage::fake('public');
     $this->actingAs(User::factory()->create());
 
     Livewire::test(ManageSite::class)
+        ->assertSchemaStateSet(['hero_interval' => 3])
         ->fillForm([
-            'hero_image' => UploadedFile::fake()->image('hero.jpg', 2400, 1200),
+            'hero_images' => [
+                UploadedFile::fake()->image('first.jpg', 2400, 1200),
+                UploadedFile::fake()->image('second.jpg', 2400, 1200),
+            ],
+            'hero_interval' => 5,
             'tagline' => 'Rock de verdade',
             'contact_email' => 'banda@example.com',
         ])
@@ -38,16 +43,40 @@ it('saves the hero image, tagline and contact address, which the home page then 
         ->assertHasNoFormErrors()
         ->assertNotified('Configurações salvas');
 
-    $heroImage = Setting::read(Setting::HOME_HERO_IMAGE);
+    $heroImages = Setting::heroImages();
 
-    expect($heroImage)->toStartWith('site/')
+    expect($heroImages)->toHaveCount(2)
+        ->and($heroImages[0])->toStartWith('site/')
+        ->and(Setting::heroInterval())->toBe(5)
         ->and(Setting::read(Setting::CONTACT_EMAIL))->toBe('banda@example.com');
-    Storage::disk('public')->assertExists($heroImage);
+    Storage::disk('public')->assertExists($heroImages);
 
     $this->get('/')
-        ->assertSee(Storage::disk('public')->url($heroImage), escape: false)
+        ->assertSeeInOrder([Storage::disk('public')->url($heroImages[0]), Storage::disk('public')->url($heroImages[1])], escape: false)
+        ->assertSee('5000')
         ->assertSee('Rock de verdade');
 });
+
+it('accepts at most five hero photos', function (): void {
+    Storage::fake('public');
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test(ManageSite::class)
+        ->fillForm(['hero_images' => array_map(fn (int $number): UploadedFile => UploadedFile::fake()->image("hero-{$number}.jpg"), range(1, 6))])
+        ->call('save')
+        ->assertHasFormErrors(['hero_images' => 'max']);
+
+    expect(Setting::heroImages())->toBe([]);
+});
+
+it('rejects a carousel interval outside 1 to 60 seconds', function (int $seconds): void {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test(ManageSite::class)
+        ->fillForm(['hero_interval' => $seconds])
+        ->call('save')
+        ->assertHasFormErrors(['hero_interval']);
+})->with([0, 61]);
 
 it('rejects an invalid contact address', function (): void {
     $this->actingAs(User::factory()->create());
@@ -65,9 +94,9 @@ it('rejects a hero upload that is not an image', function (): void {
     $this->actingAs(User::factory()->create());
 
     Livewire::test(ManageSite::class)
-        ->fillForm(['hero_image' => UploadedFile::fake()->create('notes.pdf', 100, 'application/pdf')])
+        ->fillForm(['hero_images' => [UploadedFile::fake()->create('notes.pdf', 100, 'application/pdf')]])
         ->call('save')
-        ->assertHasFormErrors(['hero_image']);
+        ->assertHasFormErrors(['hero_images']);
 });
 
 it('saves the streaming links, which the home page and footer then link to', function (): void {

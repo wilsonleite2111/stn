@@ -20,7 +20,9 @@ class Setting extends Model
 
     public const string STORE_WHATSAPP = 'store.whatsapp';
 
-    public const string HOME_HERO_IMAGE = 'home.hero_image';
+    public const string HOME_HERO_IMAGES = 'home.hero_images';
+
+    public const string HOME_HERO_INTERVAL = 'home.hero_interval';
 
     public const string HOME_TAGLINE = 'home.tagline';
 
@@ -40,6 +42,27 @@ class Setting extends Model
         }
 
         return in_array(strlen($digits), [12, 13], true) && str_starts_with($digits, '55') ? $digits : null;
+    }
+
+    /**
+     * Paths on the public disk of the home page hero photos, in carousel order.
+     *
+     * @return list<string>
+     */
+    public static function heroImages(): array
+    {
+        /** @var list<string> $images */
+        $images = json_decode(self::read(self::HOME_HERO_IMAGES) ?? '[]', true, flags: JSON_THROW_ON_ERROR);
+
+        return $images;
+    }
+
+    /**
+     * Seconds each hero photo stays on screen before the carousel moves on.
+     */
+    public static function heroInterval(): int
+    {
+        return (int) (self::read(self::HOME_HERO_INTERVAL) ?? 3);
     }
 
     /**

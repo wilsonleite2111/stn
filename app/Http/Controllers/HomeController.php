@@ -15,10 +15,9 @@ class HomeController extends Controller
 {
     public function __invoke(): View
     {
-        $heroImage = Setting::read(Setting::HOME_HERO_IMAGE);
-
         return view('home', [
-            'heroImageUrl' => filled($heroImage) ? Storage::disk('public')->url($heroImage) : null,
+            'heroImageUrls' => array_map(fn (string $path): string => Storage::disk('public')->url($path), Setting::heroImages()),
+            'heroInterval' => Setting::heroInterval(),
             'structuredData' => [
                 '@context' => 'https://schema.org',
                 '@type' => 'MusicGroup',
