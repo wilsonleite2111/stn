@@ -1,7 +1,7 @@
 {
-  "_fonts-FEp4nbD6.css": {
-    "file": "assets/fonts-FEp4nbD6.css",
-    "src": "_fonts-FEp4nbD6.css"
+  "_fonts-DsTwJKeN.css": {
+    "file": "assets/fonts-DsTwJKeN.css",
+    "src": "_fonts-DsTwJKeN.css"
   },
   "_instrument-sans-400-normal-D1W7dsQl.woff": {
     "file": "assets/instrument-sans-400-normal-D1W7dsQl.woff",
@@ -43,8 +43,16 @@
     "file": "assets/oswald-700-normal-vy6hmKSr.woff2",
     "src": "_oswald-700-normal-vy6hmKSr.woff2"
   },
+  "_russo-one-400-normal-BfOuQF9V.woff2": {
+    "file": "assets/russo-one-400-normal-BfOuQF9V.woff2",
+    "src": "_russo-one-400-normal-BfOuQF9V.woff2"
+  },
+  "_russo-one-400-normal-CosRecV9.woff": {
+    "file": "assets/russo-one-400-normal-CosRecV9.woff",
+    "src": "_russo-one-400-normal-CosRecV9.woff"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-D3y6o_xb.css",
+    "file": "assets/app-dqORZzAh.css",
     "name": "app",
     "names": [
       "app.css"

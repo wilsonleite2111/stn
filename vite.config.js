@@ -15,6 +15,9 @@ export default defineConfig({
                 bunny('Oswald', {
                     weights: [500, 700],
                 }),
+                bunny('Russo One', {
+                    weights: [400],
+                }),
             ],
         }),
         tailwindcss(),

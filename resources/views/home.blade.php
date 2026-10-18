@@ -32,9 +32,7 @@
             <div class="absolute inset-0 bg-linear-to-t from-ink via-ink/50 to-transparent"></div>
 
             <div class="relative mx-auto w-full max-w-7xl px-4 pb-12 pt-40 lg:px-8 lg:pb-20">
-                <h1 class="font-display text-5xl font-bold uppercase tracking-wide lg:text-8xl">
-                    Soul True <span class="text-brand">Noise</span>
-                </h1>
+                <x-band-name class="text-5xl lg:text-8xl" />
 
                 @if ($tagline)
                     <p class="mt-4 max-w-2xl text-xl text-white/80 lg:text-2xl">{{ $tagline }}</p>
@@ -47,9 +45,7 @@
         <section class="mx-auto max-w-7xl px-4 py-10 text-center lg:px-8 lg:py-16">
             <img src="{{ asset('images/capa.jpg') }}" alt="A banda tocando no palco, vista do alto" width="1600" height="1200" fetchpriority="high" class="mx-auto w-full max-w-5xl">
 
-            <h1 class="mt-10 font-display text-4xl font-bold uppercase tracking-wide lg:text-6xl">
-                Soul True <span class="text-brand">Noise</span>
-            </h1>
+            <x-band-name class="mt-10 text-4xl lg:text-6xl" />
 
             @if ($tagline)
                 <p class="mx-auto mt-4 max-w-2xl text-xl text-white/80">{{ $tagline }}</p>

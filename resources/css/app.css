@@ -7,6 +7,7 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     --font-display: 'Oswald', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
+    --font-logo: 'Russo One', 'Arial Black', ui-sans-serif, system-ui, sans-serif;
 
     /* Sampled from the official logo. */
     --color-ink: #0e0d10;
